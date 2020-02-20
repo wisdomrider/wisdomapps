@@ -69,6 +69,154 @@
         scrollHandler();
         $window.on('scroll', scrollHandler);
     }
+    $window.on('load', function() {
+        if (plugins.preloader.length && !isNoviBuilder) {
+            pageTransition({
+                target: document.querySelector('.page'),
+                delay: 0,
+                duration: 0,
+                classIn: 'fadeIn',
+                classOut: 'fadeOut',
+                classActive: 'animated',
+                conditions: function(event, link) {
+                    return !/(\#|callto:|tel:|mailto:|:\/\/)/.test(link) && !event.currentTarget.hasAttribute('data-lightgallery');
+                },
+                onTransitionStart: function(options) {
+                    setTimeout(function() {
+                        plugins.preloader.removeClass('loaded');
+                    }, options.duration * .75);
+                },
+                onReady: function() {
+                    plugins.preloader.addClass('loaded');
+                    windowReady = true;
+                }
+            });
+        }
+        if (plugins.counter.length) {
+            for (var i = 0; i < plugins.counter.length; i++) {
+                var
+                    counter = $(plugins.counter[i]),
+                    initCount = function() {
+                        var counter = $(this);
+                        if (!counter.hasClass("animated-first") && isScrolledIntoView(counter)) {
+                            counter.countTo({
+                                refreshInterval: 40,
+                                speed: counter.attr("data-speed") || 1000,
+                                from: 0,
+                                to: parseInt(counter.text(), 10)
+                            });
+                            counter.addClass('animated-first');
+                        }
+                    };
+                $.proxy(initCount, counter)();
+                $window.on("scroll", $.proxy(initCount, counter));
+            }
+        }
+        if (plugins.progressLinear.length) {
+            for (var i = 0; i < plugins.progressLinear.length; i++) {
+                var
+                    bar = $(plugins.progressLinear[i]),
+                    initProgress = function() {
+                        var
+                            bar = $(this),
+                            end = parseInt($(this).find('.progress-value').text(), 10);
+                        if (!bar.hasClass("animated-first") && isScrolledIntoView(bar)) {
+                            bar.find('.progress-bar-linear').css({
+                                width: end + '%'
+                            });
+                            bar.find('.progress-value').countTo({
+                                refreshInterval: 40,
+                                from: 0,
+                                to: end,
+                                speed: 1000
+                            });
+                            bar.addClass('animated-first');
+                        }
+                    };
+                $.proxy(initProgress, bar)();
+                $window.on("scroll", $.proxy(initProgress, bar));
+            }
+        }
+        if (plugins.countDown.length) {
+            svgCountDown({
+                tickInterval: 100,
+                counterSelector: '.countdown-counter'
+            });
+        }
+        if (plugins.circleProgress.length) {
+            for (var i = 0; i < plugins.circleProgress.length; i++) {
+                var circle = $(plugins.circleProgress[i]);
+                circle.circleProgress({
+                    value: circle.attr('data-value'),
+                    size: circle.attr('data-size') ? circle.attr('data-size') : 175,
+                    fill: {
+                        gradient: circle.attr('data-gradient').split(","),
+                        gradientAngle: Math.PI / 4
+                    },
+                    startAngle: -Math.PI / 4 * 2,
+                    emptyFill: circle.attr('data-empty-fill') ? circle.attr('data-empty-fill') : "rgb(245,245,245)"
+                }).on('circle-animation-progress', function(event, progress, stepValue) {
+                    $(this).find('span').text(String(stepValue.toFixed(2)).replace('0.', '').replace('1.', '1'));
+                });
+                if (isScrolledIntoView(circle)) circle.addClass('animated-first');
+                $window.on('scroll', $.proxy(function() {
+                    var circle = $(this);
+                    if (!circle.hasClass("animated-first") && isScrolledIntoView(circle)) {
+                        circle.circleProgress('redraw');
+                        circle.addClass('animated-first');
+                    }
+                }, circle));
+            }
+        }
+        if (plugins.isotope.length) {
+            for (var i = 0; i < plugins.isotope.length; i++) {
+                var
+                    wrap = plugins.isotope[i],
+                    filterHandler = function(event) {
+                        event.preventDefault();
+                        for (var n = 0; n < this.isoGroup.filters.length; n++) this.isoGroup.filters[n].classList.remove('active');
+                        this.classList.add('active');
+                        this.isoGroup.isotope.arrange({
+                            filter: this.getAttribute("data-isotope-filter") !== '*' ? '[data-filter*="' + this.getAttribute("data-isotope-filter") + '"]' : '*'
+                        });
+                    },
+                    resizeHandler = function() {
+                        this.isoGroup.isotope.layout();
+                    };
+                wrap.isoGroup = {};
+                wrap.isoGroup.filters = wrap.querySelectorAll('[data-isotope-filter]');
+                wrap.isoGroup.node = wrap.querySelector('.isotope');
+                wrap.isoGroup.layout = wrap.isoGroup.node.getAttribute('data-isotope-layout') ? wrap.isoGroup.node.getAttribute('data-isotope-layout') : 'masonry';
+                wrap.isoGroup.isotope = new Isotope(wrap.isoGroup.node, {
+                    itemSelector: '.isotope-item',
+                    layoutMode: wrap.isoGroup.layout,
+                    filter: '*',
+                    masonry: {
+                        columnWidth: '.col-1'
+                    }
+                });
+                for (var n = 0; n < wrap.isoGroup.filters.length; n++) {
+                    var filter = wrap.isoGroup.filters[n];
+                    filter.isoGroup = wrap.isoGroup;
+                    filter.addEventListener('click', filterHandler);
+                }
+                window.addEventListener('resize', resizeHandler.bind(wrap));
+            }
+        }
+        if (plugins.materialParallax.length) {
+            if (!isNoviBuilder && !isIE && !isMobile) {
+                plugins.materialParallax.parallax();
+            } else {
+                for (var i = 0; i < plugins.materialParallax.length; i++) {
+                    var $parallax = $(plugins.materialParallax[i]);
+                    $parallax.addClass('parallax-disabled');
+                    $parallax.css({
+                        "background-image": 'url(' + $parallax.data("parallax-img") + ')'
+                    });
+                }
+            }
+        }
+    });
     $(function() {
         isNoviBuilder = window.xMode;
 
