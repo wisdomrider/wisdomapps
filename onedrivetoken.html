@@ -2,8 +2,8 @@ Your token is <br><br>
 
 <h1 id="token"></h1>
 
+Paste this in bot
 
 <script>
-document.getElementById("token").value=window.location.href;
-
+document.getElementById("token").innerHTML="od_"+window.location.search.split("=")[1];
 </script>
