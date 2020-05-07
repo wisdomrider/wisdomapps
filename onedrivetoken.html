@@ -5,5 +5,6 @@ Your token is <br><br>
 Paste this in bot
 
 <script>
-document.getElementById("token").innerHTML="/odtoken "+window.location.search.split("=")[1];
+var urlParams = new URLSearchParams(window.location.search);
+document.getElementById("token").innerHTML="/odtoken "+urlParams.get("code");
 </script>
