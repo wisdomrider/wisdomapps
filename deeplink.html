@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect</title>
+</head>
+<body>
+    <h1>You are being redirected to the site.
+        <br/>
+        If you are not redirected, click 
+        <a id="link" >here</a> to go to the site.
+    </h1>
+
+    <script>
+        var url = new URL(window.location.href);
+        var link = url.searchParams.get("link");
+        document.getElementById("link").href = link
+        window.location.href=link;
+    </script>
+</body>
+</html>
