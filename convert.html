@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL Manipulation</title>
+</head>
+<body>
+  <h2>Enter the URL:</h2>
+  <input type="text" id="inputUrl" style="width: 80%;" value="">
+  <button onclick="replaceUrl()">Replace URL</button>
+
+  <h2>Output:</h2>
+  <textarea id="outputUrl" style="width: 80%; height: 100px;"></textarea>
+
+  <script>
+    function replaceUrl() {
+      var inputUrl = document.getElementById("inputUrl").value.split("?");
+      const firstUrl=inputUrl[0].split("/o")[0];
+      
+      const newUrl=`${firstUrl}${atob(atob("TDJsd2RIWnNhWFpsYzNSeVpXRnRMMjVsZEhOMFlYSnpjRzl5ZEhOVE15NXpkSEpsWVcwdmNHeGhlV3hwYzNRdWJUTjFPQT09"))}?${inputUrl[1]}`;
+      document.getElementById("outputUrl").value=newUrl;
+      
+    }
+  </script>
+</body>
+</html>
